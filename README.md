@@ -2,7 +2,7 @@
 
 Prepared for upstream commit `1b4600b052b864c78fe36180073ff406663b7e0b` of [c22dev/muguet](https://github.com/c22dev/muguet/tree/1b4600b052b864c78fe36180073ff406663b7e0b).
 
-**Status: prepared and checked statically on Windows; no macOS compilation or iPhone test has been performed by this package.** A workflow file is not a built IPA. Successful runs produce an actual arm64 Release IPA, its size/SHA-256 manifest, archive/architecture/signature reports, the matching upstream source snapshot and license, and these build scripts.
+**Status: a real launcher-only IPA was built and validated on 2026-10-24 in [run 40086156405](https://github.com/mr1844/muguet-ios-launcher-build/actions/runs/40086156405).** Both upstream host unit tests passed. Native archive/architecture/signature checks and local downloaded-file verification passed. The IPA is 4,791,908 bytes; SHA-256 `099ca47e5311e90c808a8a9b32c2b44809d6fbf638a12dd9cb63f6d5738219d1`. It **cannot play GTA V and has not been tested on an iPhone**. See [the build result](BUILD-RESULT.md). The built infrastructure commit is `2d8a7f558f556f31f72391b9dda68cebd7db4b13`; subsequent documentation does not change that artifact.
 
 ## What this builds
 
