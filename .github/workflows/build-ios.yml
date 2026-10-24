@@ -1,0 +1,59 @@
+name: Build Muguet launcher-only IPA
+
+# Never downloads, accepts, or embeds GTA V game code or assets.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: muguet-launcher-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    # Evaluated before allocating a runner. Private repositories are skipped.
+    if: ${{ github.event.repository.private == false }}
+    runs-on: macos-26
+    timeout-minutes: 150
+    env:
+      UPSTREAM_COMMIT: 1b4600b052b864c78fe36180073ff406663b7e0b
+      RUST_TOOLCHAIN: 1.98.1
+      CARGO_BUILD_JOBS: 2
+      CARGO_PROFILE_DEV_DEBUG: 0
+      CARGO_PROFILE_TEST_DEBUG: 0
+      HOMEBREW_NO_AUTO_UPDATE: 1
+      HOMEBREW_NO_ANALYTICS: 1
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Check out build infrastructure
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+          path: infrastructure
+
+      - name: Check out pinned upstream source
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          repository: c22dev/muguet
+          ref: 1b4600b052b864c78fe36180073ff406663b7e0b
+          persist-credentials: false
+          path: upstream
+
+      - name: Prepare official development tools
+        run: bash infrastructure/scripts/prepare-macos.sh
+
+      - name: Test, build Release IPA, and validate
+        run: bash infrastructure/scripts/build-and-validate.sh
+
+      - name: Upload verified launcher-only IPA and matching source
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: Muguet-launcher-only-${{ env.UPSTREAM_COMMIT }}
+          path: artifacts/
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 0
